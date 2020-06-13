@@ -1,0 +1,2 @@
+recursive-include peakrdl/uvm/templates *
+recursive-exclude test *
