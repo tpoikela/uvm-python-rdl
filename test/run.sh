@@ -26,10 +26,8 @@ cd $this_dir/..
 $python setup.py install
 cd $this_dir
 
-
 # Generate testcase verilog files
 $python generate_testcase_data.py basic testcases/basic.rdl
-
 
 # Run modelsim testcases
 if exists vsim; then
@@ -38,6 +36,8 @@ if exists vsim; then
     ./vsim_test.sh testcases/basic_uvm_nofac_noreuse_pkg.sv testcases/basic_test.sv
 fi
 
+# Run python unittests
+$python -m unittest test_cases/basic_test.py
 
 # Run lint
 cd $this_dir/..

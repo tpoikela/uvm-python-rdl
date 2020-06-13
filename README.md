@@ -1,7 +1,9 @@
-[![Build Status](https://travis-ci.org/SystemRDL/PeakRDL-uvm.svg?branch=master)](https://travis-ci.org/SystemRDL/PeakRDL-uvm)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/peakrdl-uvm.svg)](https://pypi.org/project/peakrdl-uvm)
+[![Build Status](https://travis-ci.org/uvm-python-rdl.svg?branch=master)](https://travis-ci.org/uvm-python-rdl)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/uvm-python-rdl.svg)](https://pypi.org/project/uvm-python-rdl)
 
-# PeakRDL-uvm
+uvm-python-rdl
+================
+
 Generate UVM (uvm-python) register model from compiled SystemRDL input
 
 ## Installing

@@ -1,7 +1,7 @@
-{% import 'uvm_reg.sv' as uvm_reg with context %}
-{% import 'uvm_vreg.sv' as uvm_vreg with context %}
-{% import 'uvm_reg_block-mem.sv' as uvm_reg_block_mem with context %}
-{% import 'uvm_reg_block.sv' as uvm_reg_block with context %}
+{% import 'uvm_reg.py' as uvm_reg with context %}
+{% import 'uvm_vreg.py' as uvm_vreg with context %}
+{% import 'uvm_reg_block-mem.py' as uvm_reg_block_mem with context %}
+{% import 'uvm_reg_block.py' as uvm_reg_block with context %}
 
 
 {% macro top() -%}

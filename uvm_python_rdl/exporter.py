@@ -9,7 +9,7 @@ from systemrdl import RDLWalker
 
 from .pre_export_listener import PreExportListener
 
-class UVMExporter:
+class UVMPythonExporter:
 
     def __init__(self, **kwargs):
         """
@@ -242,7 +242,8 @@ class UVMExporter:
 
             # Sanity-check for collisions
             if (obj is None) or (obj is not node.inst.original_def):
-                raise RuntimeError("Namespace collision! Type-name generation is not robust enough to create unique names!")
+                raise RuntimeError("Namespace collision! Type-name " +
+                    "generation is not robust enough to create unique names!")
 
             # This object likely represents the existing class definition
             # Ok to omit the re-definition
@@ -326,9 +327,8 @@ class UVMExporter:
         elif sw == AccessType.w1:
             return "WO1"
 
-        else: # na
+        else:  # na
             return "NOACCESS"
-
 
     def _get_mem_access(self, mem: MemNode) -> str:
         sw = mem.get_property("sw")
@@ -336,7 +336,6 @@ class UVMExporter:
             return "R"
         else:
             return "RW"
-
 
     def _get_array_address_offset_expr(self, node: AddressableNode) -> str:
         """
@@ -355,7 +354,6 @@ class UVMExporter:
                 s += " + i%d*'h%x" % (i, m)
         return s
 
-
     def _get_endianness(self, node: Node) -> str:
         amap = node.owning_addrmap
         if amap.get_property("bigendian"):
@@ -364,7 +362,6 @@ class UVMExporter:
             return "UVM_LITTLE_ENDIAN"
         else:
             return "UVM_NO_ENDIAN"
-
 
     def _get_bus_width(self, node: Node) -> int:
         """
@@ -378,7 +375,6 @@ class UVMExporter:
         else:
             return width // 8
 
-
     def _roundup_to(self, x: int, n: int) -> int:
         """
         Round x up to the nearest n
@@ -388,6 +384,5 @@ class UVMExporter:
         else:
             return (x//n) * n
 
-
     def _roundup_pow2(self, x):
-        return 1<<(x-1).bit_length()
+        return 1 << (x-1).bit_length()

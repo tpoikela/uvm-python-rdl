@@ -1,2 +1,2 @@
-recursive-include peakrdl/uvm/templates *
+recursive-include uvm-python-rdl/templates *
 recursive-exclude test *
