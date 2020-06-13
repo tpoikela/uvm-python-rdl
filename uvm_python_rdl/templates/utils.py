@@ -5,9 +5,28 @@
  */
 {% macro array_inst_suffix(node) -%}
     {%- if node.is_array -%}
+        create_array(
         {%- for dim in node.array_dimensions -%}
-            [{{dim}}]
+            {{dim}},
         {%- endfor -%}
+        0)
+    {%- else -%}
+        None
+    {%- endif -%}
+{%- endmacro %}
+
+{% macro get_product(node) -%}
+    {%- if node.is_array -%}
+        {%- if node.array_dimensions|length > 1 -%}
+        itertools.product(
+        {%- endif -%}
+        {%- for dim in node.array_dimensions -%}
+            range({{dim}})
+            {%- if not loop.last %}, {% endif -%}
+        {%- endfor -%}
+        {%- if node.array_dimensions|length > 1 -%}
+        )
+        {%- endif -%}
     {%- endif -%}
 {%- endmacro %}
 

@@ -73,47 +73,52 @@ context = {
 # Generates the testbench for generated code
 template = jj.Template("""
 import unittest
-#from basic_uvm_fac_reuse_pkg import *
-from basic_uvm_nofac_noreuse_pkg import *
-#from basic_uvm_nofac_reuse_pkg *
+#from .{{testcase_name}}_uvm_fac_reuse_pkg import *
+from .{{testcase_name}}_uvm_nofac_noreuse_pkg import *
+#from .{{testcase_name}}_uvm_nofac_reuse_pkg *
 
 def ASSERT_EQ_STR(self, a,b):
-    self.assert(a == b, "{} != {}".format(a, b))
+    self.assertEqual(a, b, "{} != {}".format(a, b))
 
 def ASSERT_EQ_INT(self, a,b):
-    self.assert(a == b, "0x{} != 0x{}".format(a, b))
+    self.assertEqual(a, b, "0x{} != 0x{}".format(a, b))
 
+
+class {{testcase_name}}_wrap:
+    def __init__(self, name):
+        self.{{rn}} = {{rn}}(name)
 
 class {{testcase_name}}UnitTest(unittest.TestCase):
 
-    def test_basic():
-        {{testcase_name}}_uvm.{{testcase_name}} {{rn}};
-        {{rn}} = new("{{rn}}")
+    def test_basic(self):
+        #{{testcase_name}}_uvm.{{testcase_name}} {{rn}}
+        #{{rn}} = {{testcase_name}}("{{rn}}")
+        {{rn}} = {{testcase_name}}_wrap("{{rn}}").{{rn}}
         {{rn}}.build()
         {{rn}}.lock_model()
 
         {% for node in root.descendants(unroll=True) %}
-        // {{node}}
+        # {{node}}
             {%- if isinstance(node, (AddrmapNode, RegfileNode, MemNode)) %}
-        ASSERT_EQ_STR({{node.get_path()}}.get_full_name(), "{{node.get_path()}}");
+        ASSERT_EQ_STR(self, {{node.get_path()}}.get_full_name(), "{{node.get_path()}}")
             {%- endif %}
             {%- if isinstance(node, RegNode) %}
                 {%- if node.is_virtual %}
-        ASSERT_EQ_STR({{node.parent.get_path() + "." + node.inst_name}}.get_full_name(), "{{node.parent.get_path() + "." + node.inst_name}}");
-        ASSERT_EQ_INT({{node.parent.get_path() + "." + node.inst_name}}.get_size(), {{node.inst.n_elements}});
+        ASSERT_EQ_STR(self, {{node.parent.get_path() + "." + node.inst_name}}.get_full_name(), "{{node.parent.get_path() + "." + node.inst_name}}")
+        ASSERT_EQ_INT(self, {{node.parent.get_path() + "." + node.inst_name}}.get_size(), {{node.inst.n_elements}})
                 {%- else %}
-        ASSERT_EQ_STR({{node.get_path()}}.get_full_name(), "{{node.get_path()}}");
-        ASSERT_EQ_INT({{node.get_path()}}.get_address(), {{"'h%x" % node.absolute_address}});
-        ASSERT_EQ_INT({{node.get_path()}}.get_n_bits(), {{node.get_property("regwidth")}});
+        ASSERT_EQ_STR(self, {{node.get_path()}}.get_full_name(), "{{node.get_path()}}")
+        ASSERT_EQ_INT(self, {{node.get_path()}}.get_address(), {{"0x%x" % node.absolute_address}})
+        ASSERT_EQ_INT(self, {{node.get_path()}}.get_n_bits(), {{node.get_property("regwidth")}})
                 {%- endif %}
             {%- endif %}
             {%- if isinstance(node, FieldNode) %}
                 {%- if node.is_virtual %}
-        ASSERT_EQ_STR({{node.parent.parent.get_path() + "." + node.parent.inst_name + "." + node.inst_name}}.get_full_name(), "{{node.parent.parent.get_path() + "." + node.parent.inst_name + "." + node.inst_name}}");
+        ASSERT_EQ_STR(self, {{node.parent.parent.get_path() + "." + node.parent.inst_name + "." + node.inst_name}}.get_full_name(), "{{node.parent.parent.get_path() + "." + node.parent.inst_name + "." + node.inst_name}}")
                 {%- else %}
-        ASSERT_EQ_STR({{node.get_path()}}.get_full_name(), "{{node.get_path()}}");
-        ASSERT_EQ_INT({{node.get_path()}}.get_lsb_pos(), {{node.lsb}});
-        ASSERT_EQ_INT({{node.get_path()}}.get_n_bits(), {{node.width}});
+        ASSERT_EQ_STR(self, {{node.get_path()}}.get_full_name(), "{{node.get_path()}}")
+        ASSERT_EQ_INT(self, {{node.get_path()}}.get_lsb_pos(), {{node.lsb}})
+        ASSERT_EQ_INT(self, {{node.get_path()}}.get_n_bits(), {{node.width}})
                 {%- endif %}
             {%- endif %}
         {%- endfor %}

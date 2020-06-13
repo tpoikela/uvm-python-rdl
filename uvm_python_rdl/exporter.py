@@ -1,5 +1,6 @@
 import os
 import re
+import itertools
 
 import jinja2 as jj
 from systemrdl.node import RootNode, Node, RegNode, AddrmapNode, RegfileNode
@@ -144,10 +145,10 @@ class UVMPythonExporter:
 
         if export_as_package:
             context['package_name'] = self._get_package_name(path)
-            template = self.jj_env.get_template("top_pkg.sv")
+            template = self.jj_env.get_template("top_pkg.py")
         else:
             context['include_guard'] = self._get_include_guard(path)
-            template = self.jj_env.get_template("top_include.svh")
+            template = self.jj_env.get_template("top_include.py")
         stream = template.stream(context)
         stream.dump(path)
 
@@ -345,13 +346,13 @@ class UVMPythonExporter:
         results in:
             X + i0*B*C*D*Y + i1*C*D*Y + i2*D*Y + i3*Y
         """
-        s = "'h%x" % node.raw_address_offset
+        s = "0x%x" % node.raw_address_offset
         if node.is_array:
             for i in range(len(node.array_dimensions)):
                 m = node.array_stride
                 for j in range(i+1, len(node.array_dimensions)):
                     m *= node.array_dimensions[j]
-                s += " + i%d*'h%x" % (i, m)
+                s += " + i%d*0x%x" % (i, m)
         return s
 
     def _get_endianness(self, node: Node) -> str:

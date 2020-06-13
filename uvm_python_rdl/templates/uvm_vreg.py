@@ -1,20 +1,21 @@
-{% import 'utils.sv' as utils with context %}
+{% import 'utils.py' as utils with context %}
+
+from uvm import (UVMVReg, uvm_object_utils)
 
 //------------------------------------------------------------------------------
 // uvm_vreg definition
 //------------------------------------------------------------------------------
 {% macro class_definition(node) -%}
 {%- if class_needs_definition(node) %}
-// {{get_class_friendly_name(node)}}
-class {{get_class_name(node)}} extends uvm_vreg;
-{%- if use_uvm_factory %}
-    `uvm_object_utils({{get_class_name(node)}})
-{%- endif %}
-    {{child_insts(node)|indent}}
+# {{get_class_friendly_name(node)}}
+class {{get_class_name(node)}}(UVMVReg):
     {{function_new(node)|indent}}
 
     {{function_build(node)|indent}}
-endclass : {{get_class_name(node)}}
+#endclass : {{get_class_name(node)}}
+{%- if use_uvm_factory %}
+uvm_object_utils({{get_class_name(node)}})
+{%- endif %}
 {% endif -%}
 {%- endmacro %}
 
@@ -24,7 +25,8 @@ endclass : {{get_class_name(node)}}
 //------------------------------------------------------------------------------
 {% macro child_insts(node) -%}
 {%- for field in node.fields() -%}
-rand uvm_vreg_field {{get_inst_name(field)}};
+#rand uvm_vreg_field {{get_inst_name(field)}}
+self.{{get_inst_name(field)}} = None
 {% endfor -%}
 {%- endmacro %}
 
@@ -33,9 +35,9 @@ rand uvm_vreg_field {{get_inst_name(field)}};
 // new() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
-function new(string name = "{{get_class_name(node)}}");
-    super.new(name, {{node.get_property('regwidth')}});
-endfunction : new
+def __init__(self, name="{{get_class_name(node)}}"):
+    super().__init__(name, {{node.get_property('regwidth')}})
+    {{child_insts(node)|indent}}
 {%- endmacro %}
 
 
@@ -43,16 +45,15 @@ endfunction : new
 // build() function
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
-virtual function void build();
+def build(self):
     {%- for field in node.fields() %}
     {%- if use_uvm_factory %}
-    this.{{get_inst_name(field)}} = uvm_vreg_field::type_id::create("{{get_inst_name(field)}}");
+    self.{{get_inst_name(field)}} = UVMVRegField.type_id.create("{{get_inst_name(field)}}")
     {%- else %}
-    this.{{get_inst_name(field)}} = new("{{get_inst_name(field)}}");
+    self.{{get_inst_name(field)}} = UVMVRegField("{{get_inst_name(field)}}")
     {%- endif %}
-    this.{{get_inst_name(field)}}.configure(this, {{field.width}}, {{field.lsb}});
+    self.{{get_inst_name(field)}}.configure(self, {{field.width}}, {{field.lsb}})
     {%- endfor %}
-endfunction : build
 {%- endmacro %}
 
 
@@ -61,10 +62,10 @@ endfunction : build
 //------------------------------------------------------------------------------
 {% macro build_instance(node) -%}
 {%- if use_uvm_factory %}
-this.{{get_inst_name(node)}} = {{get_class_name(node)}}::type_id::create("{{get_inst_name(node)}}");
+self.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}")
 {%- else %}
-this.{{get_inst_name(node)}} = new("{{get_inst_name(node)}}");
+self.{{get_inst_name(node)}} = {{get_class_name(node)}}("{{get_inst_name(node)}}")
 {%- endif %}
-this.{{get_inst_name(node)}}.configure(this, this.m_mem, {{node.inst.n_elements}});
-this.{{get_inst_name(node)}}.build();
+self.{{get_inst_name(node)}}.configure(self, self.m_mem, {{node.inst.n_elements}})
+self.{{get_inst_name(node)}}.build()
 {%- endmacro %}
