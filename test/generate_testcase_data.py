@@ -73,9 +73,9 @@ context = {
 # Generates the testbench for generated code
 template = jj.Template("""
 import unittest
-#from .{{testcase_name}}_uvm_fac_reuse_pkg import *
-from .{{testcase_name}}_uvm_nofac_noreuse_pkg import *
-#from .{{testcase_name}}_uvm_nofac_reuse_pkg *
+from .{{testcase_name}}_uvm_fac_reuse_pkg import *
+#from .{{testcase_name}}_uvm_nofac_noreuse_pkg import *
+#from .{{testcase_name}}_uvm_nofac_reuse_pkg import *
 
 
 class {{testcase_name}}_wrap:
@@ -104,6 +104,8 @@ class {{testcase_name}}UnitTest(unittest.TestCase):
         self.assertEqual({{node.get_path()}}.get_full_name(), "{{node.get_path()}}")
         self.assertEqual({{node.get_path()}}.get_address(), {{"0x%x" % node.absolute_address}})
         self.assertEqual({{node.get_path()}}.get_n_bits(), {{node.get_property("regwidth")}})
+        ok = {{node.get_path()}}.randomize()
+        self.assertTrue(ok, "{{node.inst_name}} can be randomized")
                 {%- endif %}
             {%- endif %}
             {%- if isinstance(node, FieldNode) %}

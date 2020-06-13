@@ -12,7 +12,7 @@ class {{get_class_name(node)}}(UVMRegBlock):
     {{function_new(node)|indent}}
 
     {{function_build(node)|indent}}
-# endclass : {{get_class_name(node)}}
+
 {%- if use_uvm_factory %}
 uvm_object_utils({{get_class_name(node)}})
 {%- endif %}
@@ -56,7 +56,6 @@ def build(self):
             {{uvm_reg_block_mem.build_instance(child)|indent}}
         {%- endif -%}
     {%- endfor %}
-# endfunction : build
 {%- endmacro %}
 
 

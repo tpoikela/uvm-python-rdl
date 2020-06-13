@@ -12,7 +12,7 @@ class {{get_class_name(node)}}(UVMVReg):
     {{function_new(node)|indent}}
 
     {{function_build(node)|indent}}
-#endclass : {{get_class_name(node)}}
+
 {%- if use_uvm_factory %}
 uvm_object_utils({{get_class_name(node)}})
 {%- endif %}
@@ -25,14 +25,13 @@ uvm_object_utils({{get_class_name(node)}})
 //------------------------------------------------------------------------------
 {% macro child_insts(node) -%}
 {%- for field in node.fields() -%}
-#rand uvm_vreg_field {{get_inst_name(field)}}
 self.{{get_inst_name(field)}} = None
 {% endfor -%}
 {%- endmacro %}
 
 
 //------------------------------------------------------------------------------
-// new() function
+// __init__() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
 def __init__(self, name="{{get_class_name(node)}}"):
@@ -52,6 +51,7 @@ def build(self):
     {%- else %}
     self.{{get_inst_name(field)}} = UVMVRegField("{{get_inst_name(field)}}")
     {%- endif %}
+    self.rand("{{get_inst_name(field)}}")
     self.{{get_inst_name(field)}}.configure(self, {{field.width}}, {{field.lsb}})
     {%- endfor %}
 {%- endmacro %}

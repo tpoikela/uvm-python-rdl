@@ -25,7 +25,6 @@ uvm_object_utils({{get_class_name(node)}})
 //------------------------------------------------------------------------------
 {% macro child_insts(node) -%}
 {%- for field in node.fields() -%}
-#rand uvm_reg_field {{get_inst_name(field)}}
 self.{{get_inst_name(field)}} = None
 {% endfor -%}
 {%- endmacro %}
@@ -55,6 +54,7 @@ def build(self):
     self.{{get_inst_name(field)}}.configure(self, {{field.width}},
         {{field.lsb}}, "{{get_field_access(field)}}",
         {{field.is_volatile|int}}, {{"0x%x" % field.get_property('reset', default=0)}}, 1, 1, 0)
+    self.rand("{{get_inst_name(field)}}")
     {%- endfor %}
 {%- endmacro %}
 
@@ -75,12 +75,14 @@ for {{utils.array_iterator_list(node)}} in {{utils.get_product(node)}}:
     {{add_hdl_path_slices(node, get_inst_name(node) + utils.array_iterator_suffix(node))|trim|indent}}
     self.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.build()
     self.default_map.add_reg(self.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}, {{get_array_address_offset_expr(node)}})
+self.rand("{{get_inst_name(node)}}")
 {%- else %}
 {%- if use_uvm_factory %}
 self.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}")
 {%- else %}
-self.{{get_inst_name(node)}} = new("{{get_inst_name(node)}}")
+self.{{get_inst_name(node)}} = {{get_class_name(node)}}("{{get_inst_name(node)}}")
 {%- endif %}
+self.rand("{{get_inst_name(node)}}")
 self.{{get_inst_name(node)}}.configure(self)
 {{add_hdl_path_slices(node, get_inst_name(node))|trim}}
 self.{{get_inst_name(node)}}.build()

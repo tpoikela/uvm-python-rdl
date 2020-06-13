@@ -372,9 +372,9 @@ class UVMPythonExporter:
 
         # Divide by 8, rounded up
         if width % 8:
-            return width // 8 + 1
+            return int(width // 8) + 1
         else:
-            return width // 8
+            return int(width // 8)
 
     def _roundup_to(self, x: int, n: int) -> int:
         """
