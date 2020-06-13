@@ -5,20 +5,20 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
-with open(os.path.join("peakrdl/uvm", "__about__.py")) as f:
+with open(os.path.join("uvm-python-rdl", "__about__.py")) as f:
     v_dict = {}
     exec(f.read(), v_dict)
     version = v_dict['__version__']
 
 setuptools.setup(
-    name="peakrdl-uvm",
+    name="uvm-python-rdl",
     version=version,
-    author="Alex Mykyta, Jude Zhang",
+    author="Tuomas Poikela",
     description="Generate UVM register model from compiled SystemRDL input",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/SystemRDL/PeakRDL-uvm",
-    packages=['peakrdl.uvm'],
+    url="",
+    packages=['uvm-python-rdl'],
     include_package_data=True,
     install_requires=[
         "systemrdl-compiler>=1.12.0",
@@ -39,7 +39,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
     ),
     project_urls={
-        "Source": "https://github.com/SystemRDL/PeakRDL-uvm",
-        "Tracker": "https://github.com/SystemRDL/PeakRDL-uvm/issues"
+        "Source": "",
+        "Tracker": ""
     },
 )
