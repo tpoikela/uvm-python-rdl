@@ -4,12 +4,19 @@
 uvm-python-rdl
 ================
 
-Generate UVM (uvm-python) register model from compiled SystemRDL input
+Generate UVM (uvm-python) register model from compiled SystemRDL input. This is
+ported from the project https://github.com/SystemRDL/PeakRDL-uvm
 
 ## Installing
-Install from [PyPi](https://pypi.org/project/uvm-python-rdl) using pip:
 
-    python3 -m pip install uvm-python-rdl
+    python3 -m pip install .
+
+## Running the script
+
+This package includes a script to generate the register model, and some unit
+tests for sanity checking.
+
+    uvm-python-rdl <test_name> <rdl_file>
 
 --------------------------------------------------------------------------------
 
@@ -74,3 +81,8 @@ Perform the export!
       UVM factory.
     * If False (Default), UVM factory is disabled. Classes are created
       directly via new() constructors.
+
+## Related projects
+
+* [UVM 1.2 port to Python](https://github.com/tpoikela/uvm-python)
+* [Functional Coverage and Constrained Randomization Extensions for Cocotb](https://github.com/mciepluc/cocotb-coverage)
