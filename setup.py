@@ -25,6 +25,11 @@ setuptools.setup(
         "systemrdl-compiler>=1.12.0",
         "jinja2",
     ],
+    entry_points={
+        'console_scripts': [
+            'uvm-python-rdl=uvm_python_rdl.uvm_generator:main'
+        ]
+    },
     classifiers=(
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
